@@ -14,6 +14,13 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 const path = location.pathname.replace(/\/$/, '') || '/'
 const sharedId = path.match(/^\/a\/([a-z0-9]{7})$/)?.[1]
 
+// 검색엔진용 대표 주소. index.html 하나가 모든 경로를 그려서 경로마다 여기서 넣는다.
+// 미리보기 배포 주소가 아니라 항상 실제 주소를 가리키도록 고정.
+const canonical = document.createElement('link')
+canonical.rel = 'canonical'
+canonical.href = `https://where-the-drops-freeze.vercel.app${path}`
+document.head.append(canonical)
+
 if (path === '/') renderHome(app)
 else if (path === '/shape') renderShape(app)
 else if (path === '/play') {

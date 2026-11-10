@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+# 내 작품은 브라우저마다 달라서 색인할 내용이 없다
+Disallow: /me
+# 서버 함수는 막되, 공유 미리보기 이미지는 메신저·SNS 봇이 가져가야 한다
+Disallow: /api/
+Allow: /api/og
+
+Sitemap: https://where-the-drops-freeze.vercel.app/sitemap.xml
