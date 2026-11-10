@@ -552,6 +552,22 @@ body {
   pointer-events: none;
 }
 
+/* 홈 하단 작은 링크 (소개, 개인정보처리방침) */
+.home-foot {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.home-foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--text-3);
+  font-size: 13px;
+  text-decoration: none;
+}
 
 /* 글 화면 (소개, 개인정보처리방침) */
 .doc {
@@ -594,19 +610,34 @@ body {
   font-size: 14px;
 }
 
-/* 홈 하단 작은 링크 (소개, 개인정보처리방침) */
-.home-foot {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
+/* 스크롤바: 얇은 반투명 막대. 크롬·사파리는 둥근 막대, 파이어폭스는 thin */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-.home-foot a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 8px;
-  color: var(--text-3);
-  font-size: 13px;
-  text-decoration: none;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  /* 투명 테두리로 막대를 가운데 4px만 보이게 */
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(191, 233, 251, 0.22) padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(191, 233, 251, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(191, 233, 251, 0.25) transparent;
+  }
 }
