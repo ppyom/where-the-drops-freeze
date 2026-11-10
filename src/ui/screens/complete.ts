@@ -1,5 +1,6 @@
 // 완성 화면: 아래에서 올라오는 시트. 저장 → 링크 공유.
 import { type Artwork, saveArtwork, shareUrl } from '../../api/store.ts'
+import { track } from '../../api/analytics.ts'
 
 const ERRORS: Record<string, string> = {
   daily_limit: '오늘은 10개까지 저장할 수 있어요. 내일 다시 저장해 주세요.',
@@ -37,7 +38,9 @@ export function openComplete(art: Artwork, onNew: () => void, onSaved?: () => vo
     saveBtn.textContent = '저장하는 중…'
     errEl.hidden = true
     try {
-      showLink(shareUrl(await saveArtwork(art)))
+      const id = await saveArtwork(art)
+      track('artwork_save', { shape: art.shape, drop_count: n })
+      showLink(id)
       onSaved?.()
     } catch (e) {
       const [code, detail] = (e as Error).message.split(':')
@@ -50,7 +53,8 @@ export function openComplete(art: Artwork, onNew: () => void, onSaved?: () => vo
   })
 
   // 저장 후: 링크 + 공유. 저장한 작품은 더 못 키우므로 닫으면 새로 시작.
-  function showLink(url: string) {
+  function showLink(id: string) {
+    const url = shareUrl(id)
     $('.sheet').innerHTML = `
       <h2 class="sheet-title" id="sheet-title">링크가 만들어졌어요</h2>
       <p class="sheet-text">30일 동안 보관돼요.</p>
@@ -61,11 +65,14 @@ export function openComplete(art: Artwork, onNew: () => void, onSaved?: () => vo
     saved = true
     const shareBtn = $<HTMLButtonElement>('#share')
     shareBtn.addEventListener('click', async () => {
+      // 공유 창에서 취소하면 reject되므로 성공했을 때만 기록
       if (navigator.share) {
-        await navigator.share({ title: 'Where the Drops Freeze', url }).catch(() => {})
+        await navigator.share({ title: 'Where the Drops Freeze', url })
+          .then(() => track('share', { method: 'native', item_id: id }), () => {})
       } else {
         await navigator.clipboard.writeText(url)
         shareBtn.textContent = '링크를 복사했어요'
+        track('share', { method: 'copy', item_id: id })
       }
     })
     $('#new').addEventListener('click', () => {
