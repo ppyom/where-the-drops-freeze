@@ -1,0 +1,553 @@
+/* 디자인 토큰 */
+:root {
+  --bg-top: #070d18;
+  --bg-bottom: #0b182b;
+  --glow-blue: #2e6fb0;
+  --glow-violet: #5b4bb8;
+  --glow-teal: #1f8fa8;
+
+  --text: #f2f8fc;
+  --text-2: #a9bcd0;
+  --text-3: #8ea2b8;
+  --ice: #bfe9fb;
+  --heart: #ff8fa8;
+  --warn: #ffb86b;
+
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-line: rgba(255, 255, 255, 0.14);
+
+  --font: 'SUITE Variable', 'SUITE', system-ui, sans-serif;
+  --font-logo: 'Instrument Serif', serif;
+  --font-num: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background-color: var(--bg-top);
+  background:
+    radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--glow-blue) 35%, transparent), transparent 45%),
+    radial-gradient(circle at 90% 45%, color-mix(in srgb, var(--glow-violet) 30%, transparent), transparent 45%),
+    radial-gradient(circle at 30% 90%, color-mix(in srgb, var(--glow-teal) 30%, transparent), transparent 45%),
+    linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* 유리 표면 */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.glass-bar {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 플레이 화면 */
+.play {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hud {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.hud-label {
+  color: var(--text-2);
+}
+
+.play-canvas {
+  flex: 1;
+  min-height: 0;
+  /* HUD 아래부터 시작 (margin은 Phaser 부모 크기 계산에 안 잡힘) */
+  margin-top: calc(68px + env(safe-area-inset-top));
+  margin-bottom: calc(76px + env(safe-area-inset-bottom));
+  touch-action: none;
+}
+
+/* 플레이 화면은 폭 제한 없이 화면에 맞춘다 */
+#app:has(> .play) {
+  max-width: none;
+}
+
+/* 누를 수 있는 영역 표시 */
+.play-canvas canvas {
+  background: rgba(255, 255, 255, 0.035);
+  outline: 1px solid rgba(255, 255, 255, 0.08);
+  outline-offset: -1px;
+}
+
+/* 하단 조작 바: 도구(유리) + 완성(주요 버튼) */
+.controls {
+  position: absolute;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tools {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  text-decoration: none;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-btn:active:not(:disabled) {
+  background: var(--glass);
+}
+
+.icon-btn:disabled {
+  color: var(--text-3);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.icon-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 주요 버튼 (한 화면에 하나) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  height: 56px;
+  padding: 0 32px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f4faff, #cdebfb);
+  color: #07111f;
+  font: 700 16px var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn-text {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: 600 15px var(--font);
+  cursor: pointer;
+}
+
+/* 아래에서 올라오는 시트 */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  background: rgba(4, 8, 16, 0.55);
+  animation: fade-in 0.2s ease-out;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 24px 16px;
+  border-radius: 28px;
+  animation: sheet-up 0.25s ease-out;
+}
+
+.sheet-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sheet-text {
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.sheet-error {
+  color: var(--warn);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.link-box {
+  padding: 14px 16px;
+  border-radius: 16px;
+  color: var(--ice);
+  font: 15px var(--font-num);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  -webkit-user-select: all;
+  user-select: all;
+  margin-bottom: 8px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+}
+
+.btn-primary.block {
+  display: flex;
+  width: 100%;
+}
+
+/* 좋아요: 아이콘 + 숫자 */
+.icon-btn.wide {
+  display: flex;
+  gap: 6px;
+  width: auto;
+  padding: 0 16px 0 12px;
+  font-size: 15px;
+}
+
+.icon-btn.liked,
+.icon-btn.liked:disabled {
+  color: var(--text);
+  opacity: 1;
+}
+
+.icon-btn.liked svg {
+  fill: var(--heart);
+  stroke: var(--heart);
+}
+
+/* 플레이 화면 위쪽 양옆 버튼 */
+.top-btn {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  color: var(--text);
+}
+
+.top-btn.left {
+  left: 16px;
+}
+
+.top-btn.right {
+  right: 16px;
+}
+
+.top-btn svg,
+.card-likes svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 신고 사유 */
+.option-btn {
+  min-height: 52px;
+  padding: 0 18px;
+  border-radius: 16px;
+  color: var(--text);
+  font: 600 16px var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+
+.option-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 목록 화면 (갤러리, 내 작품) */
+.screen {
+  height: 100%;
+  overflow-y: auto;
+  padding: calc(12px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+.screen-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 16px -8px;
+}
+
+.screen-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.screen-note {
+  padding: 40px 0 24px;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  display: block;
+  overflow: hidden;
+  border-radius: 20px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.card canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.card-likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-likes svg {
+  width: 16px;
+  height: 16px;
+  color: var(--heart);
+}
+
+.card-days {
+  color: var(--text-3);
+}
+
+.card-days.warn {
+  color: var(--warn);
+}
+
+.card-badge {
+  padding: 2px 8px;
+  border: 1px solid var(--glass-line);
+  border-radius: 999px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.more {
+  display: block;
+  margin: 16px auto 0;
+}
+
+/* Turnstile 위젯 (확인이 필요할 때만 보임) */
+.captcha {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+/* 홈 */
+.home {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: calc(16px + env(safe-area-inset-top)) 24px calc(16px + env(safe-area-inset-bottom));
+}
+
+.home-demo {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.home-demo canvas {
+  max-width: 100%;
+  max-height: 100%;
+  transition: opacity 0.5s ease;
+}
+
+.logo {
+  margin-top: 8px;
+  font: 400 44px/1.02 var(--font-logo);
+  letter-spacing: -0.01em;
+}
+
+.home-text {
+  margin: 12px 0 24px;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.home-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.home-links .btn-text,
+.message .btn-text {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  text-decoration: none;
+}
+
+/* 모양 고르기 카드 설명 */
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px 14px;
+}
+
+.card-info strong {
+  font-size: 17px;
+}
+
+.card-info span {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* 예외 화면 */
+.message {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.message-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.message-text {
+  margin-bottom: 12px;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 토스트 */
+.toast {
+  position: fixed;
+  top: calc(68px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: center;
+  animation: fade-in 0.2s ease-out;
+  pointer-events: none;
+}
