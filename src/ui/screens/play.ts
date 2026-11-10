@@ -6,6 +6,7 @@ import { MIN_DROPS } from '../../core/config.ts'
 import { openComplete } from './complete.ts'
 import { openReport } from './report.ts'
 import { type ArtworkRow, likeArtwork, hasLiked } from '../../api/store.ts'
+import { track } from '../../api/analytics.ts'
 import { icons } from '../icons.ts'
 
 // shape: 새로 만들기, view: 받은 작품 보기
@@ -115,6 +116,7 @@ export function startPlay(app: HTMLElement, mode: Mode) {
       setLiked(true, before + 1) // 먼저 반영하고 서버 값으로 맞춤
       try {
         setLiked(true, await likeArtwork(art.id))
+        track('like', { item_id: art.id })
       } catch (e) {
         console.error(e)
         setLiked(false, before)

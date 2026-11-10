@@ -1,6 +1,7 @@
 import './ui/styles.css'
 import type { Shape } from './core/ice.ts'
 import { loadArtwork } from './api/store.ts'
+import { initAnalytics } from './api/analytics.ts'
 import { renderHome } from './ui/screens/home.ts'
 import { renderShape } from './ui/screens/shape.ts'
 import { startPlay } from './ui/screens/play.ts'
@@ -8,6 +9,8 @@ import { renderGallery } from './ui/screens/gallery.ts'
 import { renderMine } from './ui/screens/mine.ts'
 import { renderAbout, renderPrivacy } from './ui/screens/info.ts'
 import { renderMessage, renderLoading } from './ui/screens/message.ts'
+
+initAnalytics()
 
 // 주소로 화면 고르기. 화면 이동은 일반 링크(새로 불러오기)로 단순하게.
 const app = document.querySelector<HTMLDivElement>('#app')!
