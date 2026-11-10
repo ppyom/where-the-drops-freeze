@@ -593,3 +593,20 @@ body {
   color: var(--text-3);
   font-size: 14px;
 }
+
+/* 홈 하단 작은 링크 (소개, 개인정보처리방침) */
+.home-foot {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.home-foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--text-3);
+  font-size: 13px;
+  text-decoration: none;
+}
