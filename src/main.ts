@@ -6,12 +6,20 @@ import { renderShape } from './ui/screens/shape.ts'
 import { startPlay } from './ui/screens/play.ts'
 import { renderGallery } from './ui/screens/gallery.ts'
 import { renderMine } from './ui/screens/mine.ts'
+import { renderAbout, renderPrivacy } from './ui/screens/info.ts'
 import { renderMessage, renderLoading } from './ui/screens/message.ts'
 
 // 주소로 화면 고르기. 화면 이동은 일반 링크(새로 불러오기)로 단순하게.
 const app = document.querySelector<HTMLDivElement>('#app')!
 const path = location.pathname.replace(/\/$/, '') || '/'
 const sharedId = path.match(/^\/a\/([a-z0-9]{7})$/)?.[1]
+
+// 검색엔진용 대표 주소. index.html 하나가 모든 경로를 그려서 경로마다 여기서 넣는다.
+// 미리보기 배포 주소가 아니라 항상 실제 주소를 가리키도록 고정.
+const canonical = document.createElement('link')
+canonical.rel = 'canonical'
+canonical.href = `https://where-the-drops-freeze.vercel.app${path}`
+document.head.append(canonical)
 
 if (path === '/') renderHome(app)
 else if (path === '/shape') renderShape(app)
@@ -20,6 +28,8 @@ else if (path === '/play') {
   startPlay(app, { shape: shape === 'flat' ? 'flat' : ('triangle' as Shape) })
 } else if (path === '/gallery') renderGallery(app)
 else if (path === '/me') renderMine(app)
+else if (path === '/about') renderAbout(app)
+else if (path === '/privacy') renderPrivacy(app)
 else if (sharedId) openShared(sharedId)
 else renderMessage(app, '페이지를 찾을 수 없어요', '주소가 바뀌었거나 없는 페이지예요.', { label: '홈으로', href: '/' })
 
