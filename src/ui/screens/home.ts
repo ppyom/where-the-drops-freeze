@@ -25,6 +25,10 @@ export function renderHome(app: HTMLElement) {
         <a class="btn-text" href="/gallery">갤러리</a>
         <a class="btn-text" href="/me">내 작품</a>
       </nav>
+      <footer class="home-foot">
+        <a href="/about">소개</a>
+        <a href="/privacy">개인정보처리방침</a>
+      </footer>
     </div>
   `
   const canvas = app.querySelector('canvas')!
