@@ -3,6 +3,7 @@ import { type Shape, W, H } from '../../core/ice.ts'
 import { demoDrops } from '../../core/demo.ts'
 import { replay } from '../../core/replay.ts'
 import { drawIce } from '../../game/draw.ts'
+import { adSlot } from '../ad.ts'
 
 const DEMO_S = 4 // 데모 셀 크기(px) → 360×520
 const DEMO_STEP = 90 // 물방울 1개당 ms
@@ -31,6 +32,8 @@ export function renderHome(app: HTMLElement) {
       </footer>
     </div>
   `
+  const ad = adSlot()
+  if (ad) app.querySelector('.home')!.append(ad)
   const canvas = app.querySelector('canvas')!
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduce) return drawDemo(canvas, 1, 'triangle')
