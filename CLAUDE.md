@@ -39,11 +39,14 @@ src/
     draw.ts       얼음 5겹 그리기 (플레이 화면·썸네일 공용)
   ui/
     screens/      home(/), shape(/shape), play(/play?shape=, /a/{id}),
-                  gallery(/gallery), mine(/me), complete·report(시트), message(예외 화면)
+                  gallery(/gallery), mine(/me), complete·report(시트), message(예외 화면),
+                  info(/about, /privacy)
+    ad.ts         광고 칸 (메뉴 화면에만)
     icons.ts      인라인 SVG 아이콘
     styles.css    디자인 토큰 + 컴포넌트 클래스
   api/
     store.ts      Supabase 저장/불러오기/좋아요/신고
+    analytics.ts  GA4 (프로덕션 빌드에서만)
   main.ts
 api/              Vercel 서버 함수 (src/core를 그대로 import)
   og.ts           공유 미리보기 PNG 1200×630. 요청마다 drops로 다시 그림 (저장 X, CDN 캐시)
@@ -93,8 +96,8 @@ scripts/
 - 클라이언트 제한만 믿지 않는다. 같은 제한을 서버에서도 검사한다.
 - 내 작품은 `my_artworks()` RPC (owner가 비공개라서).
 - 공유 링크: `/a/{id}`. 화면 이동은 일반 링크(페이지 새로 불러오기).
-- 배포: Vercel. `vercel.json`에서 모든 경로를 `index.html`로 rewrite (정적 파일이 먼저). 환경 변수 3개는 Vercel 프로젝트 설정에 넣는다.
-- Supabase URL·키는 `.env`(`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_TURNSTILE_SITE_KEY`). Turnstile 시크릿은 Supabase Auth CAPTCHA 설정에만. 절대 커밋하지 않는다.
+- 배포: Vercel. `vercel.json`에서 `/a/{id}`는 `api/share`로, 나머지 경로는 `index.html`로 rewrite (정적 파일이 먼저). 환경 변수는 Vercel 프로젝트 설정에도 넣는다.
+- 환경 변수는 `.env`에 둔다. 필수: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_TURNSTILE_SITE_KEY`. 선택: `VITE_GA_ID`, `VITE_ADSENSE_CLIENT`, `VITE_ADSENSE_SLOT`(없으면 GA·광고가 꺼짐). Turnstile 시크릿은 Supabase Auth CAPTCHA 설정에만. 절대 커밋하지 않는다.
 
 ## 디자인 시스템
 
