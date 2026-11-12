@@ -4,6 +4,7 @@ import { replay } from '../../core/replay.ts'
 import { drawIce } from '../../game/draw.ts'
 import { type ArtworkRow, popularArtworks } from '../../api/store.ts'
 import { icons } from '../icons.ts'
+import { adSlot } from '../ad.ts'
 
 const PAGE = 20
 const THUMB_S = 3 // 썸네일 셀 크기(px) → 270×390
@@ -49,6 +50,8 @@ export const likesMeta = (n: number) => `<span class="card-likes">${icons.heart}
 
 export function renderGallery(app: HTMLElement) {
   const body = screenShell(app, '갤러리')
+  const ad = adSlot()
+  if (ad) body.before(ad)
   body.innerHTML = `<div class="cards"></div><p class="screen-note" hidden></p><button class="btn-text more" hidden>더 보기</button>`
   const cards = body.querySelector('.cards')!
   const note = body.querySelector<HTMLElement>('.screen-note')!

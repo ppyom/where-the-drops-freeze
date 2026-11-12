@@ -1,11 +1,14 @@
 // 내 작품(/me): 이 브라우저(익명 사용자)가 저장한 작품. 보관 남은 날 표시.
 import { myArtworks, daysLeft } from '../../api/store.ts'
 import { screenShell, artCard, likesMeta } from './gallery.ts'
+import { adSlot } from '../ad.ts'
 
 const WARN_DAYS = 3 // 이 이하면 보관 임박 경고
 
 export async function renderMine(app: HTMLElement) {
   const body = screenShell(app, '내 작품')
+  const ad = adSlot()
+  if (ad) body.before(ad)
   body.innerHTML = `<p class="screen-note">불러오는 중…</p>`
   try {
     const rows = await myArtworks()
